@@ -1,3 +1,3 @@
-﻿image,type,verdict,note
-000000009914,class_swap,,
-000000010363,class_swap,,
+image,type,verdict,note
+000000009914,class_swap,rejected,"Quân: humberger,  detection ghi hot dog và sandwich; panoptic ghi sandwich"
+000000010363,class_swap,confirmed,"Quân: cat,  detection ghi cat là đúng; panoptic ghi dog là lỗi"
