@@ -1,0 +1,4 @@
+# Lô bàn giao v2: giữ nguyên từng byte (không đổi LF/CRLF khi commit/checkout).
+# manifest.csv và file .sha256 ghi sha256 của đúng các byte này; nếu git đổi xuống dòng
+# (core.autocrlf trên Windows) thì check_handover H7, H8, H15 sẽ FAIL trên máy người chấm.
+submission/**/handover/** -text
