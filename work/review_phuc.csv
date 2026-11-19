@@ -1,3 +1,3 @@
 ﻿image,type,verdict,note
-000000014226,instance_merge,,
-000000022705,class_swap,,
+000000014226,instance_merge,confirmed,"[Phúc] mở ảnh thấy rõ 4 ghế riêng biệt; trong panoptic hai ghế đã bị gộp thành một segment chair lớn (area 25463)"
+000000022705,class_swap,rejected,"[Phúc] mở ảnh thấy người đứng trước tủ lạnh, cả hai nguồn đều có nhãn người và tủ lạnh; box trùng do người che khuất tủ lạnh, lệch tự nhiên"
