@@ -46,7 +46,17 @@
   - Cần đánh giá lại R-021 trên tập val sạch (không rò cảnh) và train lại trên v2 sau khi các ảnh rework được gán lại.
 
 ## 4. Hash chứng minh gì, không chứng minh gì?
-<<>>
+**Chứng minh (toàn vẹn):**
+- `manifest.csv` của v2 ghi sha256 cho từng file trong `images/` và `labels/` (480 file). Bất kỳ ai tính lại sha256 trên byte của file mà khớp thì file **không bị đổi** kể từ lúc lập manifest: không hỏng khi chép, không bị sửa lén (H8).
+- File `.sha256` cho cả gói `lab250_a13aacb20205_v2.zip`. Zip được đóng tái lập (thứ tự file và thời gian cố định), nên đóng gói lại từ cùng nội dung phải ra đúng mã đó (H15). Người nhận kiểm được cả lô bằng một mã.
+- **v1 không bị ghi đè:** `release_id` v1 là hash của `manifest.json` + `metadata.json`, và nhãn/mask v1 vẫn khớp hash trong manifest v1 (H1). Nhãn trong v2 trùng hash nhãn v1 nên không bị sửa tay (H7).
+- Hash giúp **phát hiện** lỗi `wrong_hash`: tính lại sha256 thấy `000000003553` và `000000008277` không khớp manifest v1; mã ghi trong manifest thực chất là hash của ảnh khác (`000000013004`, `000000019042`).
+
+**Không chứng minh:**
+- **Nhãn đúng.** Một nhãn gán sai (`class_swap`, box lệch, thiếu box) vẫn có hash hợp lệ; hash chỉ nói file giống lúc lập manifest. Nhãn đúng hay sai phải đối chiếu hai nguồn và mở ảnh xem.
+- **Nội dung ảnh đúng hay ảnh còn dùng được.** Hash khớp không nói ảnh có đúng cảnh, có bị mờ, có mặt người cần che hay không. Hash lệch cũng không tự nói ảnh hỏng: với 2 ảnh `wrong_hash`, nhóm phải **mở ảnh** (giải mã đủ, đúng kích thước, nội dung khớp nhãn: người trên ván trượt; bông cải, gà, nĩa) mới kết luận chỉ manifest sai, ghi hash mới trong v2, không đưa vào rework.
+- **Quy trình đúng:** hash không chứng minh người gán theo đúng guideline, đúng split, hay ai là người sửa. Những điều đó nằm ở `truyvet.csv`, `jobs.csv` và lineage.
+- **Hash không thay được chữ ký hay quyền:** ai sửa file rồi lập lại manifest thì hash mới vẫn "khớp". Hash chỉ có giá trị khi mã gốc được lưu ở nơi tin cậy (lineage, file `.sha256` gửi kèm bàn giao).
 
 ## 5. Truy vết
 Ticket nêu lớp `cup` và hai cảnh scene_342, scene_675; changelog cho biết v1.3 đổi quy tắc `cup` (vật bị che/cắt mép vẫn phải gán box). `tools/trace_query.py` đọc lớp và cảnh từ hai file này bằng code (không gõ cứng).
