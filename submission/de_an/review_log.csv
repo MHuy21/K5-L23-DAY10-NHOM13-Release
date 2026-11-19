@@ -1,0 +1,23 @@
+image,type,verdict,note
+img_0006,class_swap,rejected,[Huy] hai nhận định đều đúng
+img_0028,class_swap,confirmed,[Huy] Detection xe máy là bicycle trong khi đó là motorcycle
+img_0036,class_swap,confirmed,[Huy] Detection  xác nhận đúng chỉ có couch và có 2 người đứng cạnh nhau chứ không phải 1 người như dectection xác định
+img_0045,class_swap,confirmed,[Huy] Detection đánh thừa 1 backpack
+img_0054,class_swap,rejected,[Huy] Hai nhận định đều đúng
+img_0061,category_swap,confirmed,"[Huy] Tôi nghĩ đối tượng detection đánh là cake và panoptic đánh là donut. Đó là bread; (AI) bánh không có lỗ tròn nên không phải donut, lớp COCO gần nhất là cake: panoptic ghi donut sai"
+img_0062,class_swap,confirmed,[Huy] chiếc xe ở góc dưới bên trái ảnh là car chứ không phải truck như detection gán
+img_0086,class_swap,rejected,"[AI-Claude, coach cho phép] góc trên phải: detection có cả box chair và box dining table trùng nhau (IoU 0.9) trên cùng vật, panoptic chỉ có dining table; box kép tự nhiên của COCO, không phải đổi lớp"
+img_0115,class_swap,rejected,"[AI-Claude, coach cho phép] hộp nhựa trong trên bàn: detection có cả box cup và box bowl trùng nhau (IoU 0.98), panoptic ghi bowl; box kép tự nhiên, không phải đổi lớp"
+img_0117,bbox_drift,confirmed,"[AI-Claude, coach cho phép] box elephant lệch sang trái: thừa khoảng đất trống bên trái, tai phải con voi nằm ngoài box; panoptic viền đúng con voi"
+img_0120,class_swap,rejected,"[AI-Claude, coach cho phép] túi đặt trên cát cạnh người ngồi: detection có cả box backpack và box handbag trùng nhau (IoU 0.93), panoptic ghi handbag; box kép tự nhiên"
+img_0129,class_swap,rejected,"[AI-Claude, coach cho phép] tô nhựa trắng đựng cà rốt, bông cải đặt trên khăn bàn: cả hai nguồn đều có bowl và dining table, box tô và box bàn chồng nhau nên bị ghép nhầm"
+img_0131,instance_merge,rejected,"[AI-Claude, coach cho phép] xe ở nền ảnh rất nhỏ và mờ; box truck thứ hai trùng vùng panoptic ghi car, không thấy rõ hai xe tải riêng bị gộp thành một segment"
+img_0145,class_swap,rejected,"[AI-Claude, coach cho phép] ghế bành trắng trên vỉa hè: detection có cả box couch và box chair trùng nhau (IoU 0.97), panoptic ghi chair; box kép tự nhiên"
+img_0146,class_swap,rejected,"[AI-Claude, coach cho phép] xe bán tải màu xám phía sau trụ cứu hoả: detection có cả box truck và box car trùng nhau (IoU 0.97), panoptic ghi car; box kép tự nhiên"
+img_0169,class_swap,rejected,"[AI-Claude, coach cho phép] xe bán đồ ăn màu xanh bên trái: detection có cả box bus và box truck trùng nhau, panoptic ghi truck; box kép tự nhiên, không phải đổi lớp"
+img_0171,instance_merge,confirmed,"[AI-Claude, coach cho phép] có hai ba lô riêng: một trên lưng người đứng ở cửa, một đặt dưới đất; panoptic gộp cả hai thành một segment backpack (846 và 778 pixel nằm trong hai box)"
+img_0178,bbox_drift,confirmed,"[AI-Claude, coach cho phép] xe con phía sau xe van trắng: box car bị dời sang phải khoảng 20 px, mép trái xe nằm ngoài box; panoptic viền đúng xe"
+img_0188,class_swap,rejected,"[AI-Claude, coach cho phép] khay nhôm đựng rau củ đặt trên bàn: cả hai nguồn đều có bowl và dining table, box khay và box bàn chồng nhau nên bị ghép nhầm"
+img_0226,class_swap,rejected,"[AI-Claude, coach cho phép] túi hành lý phía sau sân ga: detection có cả box backpack và box suitcase trùng nhau (IoU 0.9), panoptic ghi suitcase; box kép tự nhiên"
+img_0238,class_swap,confirmed,"[AI-Claude, coach cho phép] phóng to góc trái thấy ghế gỗ có lưng tựa và bốn chân, ghế một người; detection ghi bench sai, panoptic ghi chair đúng"
+img_0245,missing_box,confirmed,"[AI-Claude, coach cho phép] bồn cầu trắng lớn bên phải ảnh không có box detection nào; panoptic có segment toilet cho vật này"

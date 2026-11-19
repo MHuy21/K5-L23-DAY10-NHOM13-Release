@@ -1,0 +1,134 @@
+[
+  {
+    "image": "img_0006",
+    "type": "class_swap",
+    "score": 0.904,
+    "detail": "Disagreement: detection says 'bus', panoptic says 'truck' (IoU=0.90)"
+  },
+  {
+    "image": "img_0028",
+    "type": "class_swap",
+    "score": 0.996,
+    "detail": "Disagreement: detection says 'bicycle', panoptic says 'motorcycle' (IoU=1.00)"
+  },
+  {
+    "image": "img_0036",
+    "type": "class_swap",
+    "score": 0.933,
+    "detail": "Disagreement: detection says 'bed', panoptic says 'couch' (IoU=0.93)"
+  },
+  {
+    "image": "img_0045",
+    "type": "class_swap",
+    "score": 0.878,
+    "detail": "Disagreement: detection says 'handbag', panoptic says 'backpack' (IoU=0.88)"
+  },
+  {
+    "image": "img_0054",
+    "type": "class_swap",
+    "score": 0.73,
+    "detail": "Disagreement: detection says 'sandwich', panoptic says 'hot dog' (IoU=0.73)"
+  },
+  {
+    "image": "img_0061",
+    "type": "class_swap",
+    "score": 0.992,
+    "detail": "Disagreement: detection says 'cake', panoptic says 'donut' (IoU=0.99)"
+  },
+  {
+    "image": "img_0062",
+    "type": "class_swap",
+    "score": 0.946,
+    "detail": "Disagreement: detection says 'truck', panoptic says 'car' (IoU=0.95)"
+  },
+  {
+    "image": "img_0086",
+    "type": "class_swap",
+    "score": 0.896,
+    "detail": "Disagreement: detection says 'chair', panoptic says 'dining table' (IoU=0.90)"
+  },
+  {
+    "image": "img_0115",
+    "type": "class_swap",
+    "score": 0.969,
+    "detail": "Disagreement: detection says 'cup', panoptic says 'bowl' (IoU=0.97)"
+  },
+  {
+    "image": "img_0117",
+    "type": "bbox_drift",
+    "score": 0.485,
+    "detail": "Box for 'elephant' has center drift 36.1px (IoU=0.48)"
+  },
+  {
+    "image": "img_0120",
+    "type": "class_swap",
+    "score": 0.924,
+    "detail": "Disagreement: detection says 'backpack', panoptic says 'handbag' (IoU=0.92)"
+  },
+  {
+    "image": "img_0129",
+    "type": "class_swap",
+    "score": 0.933,
+    "detail": "Disagreement: detection says 'bowl', panoptic says 'dining table' (IoU=0.93)"
+  },
+  {
+    "image": "img_0131",
+    "type": "instance_merge",
+    "score": 0.95,
+    "detail": "Panoptic segment 'truck' merges two distinct detection boxes (det=2 > pan=1)"
+  },
+  {
+    "image": "img_0145",
+    "type": "class_swap",
+    "score": 0.971,
+    "detail": "Disagreement: detection says 'couch', panoptic says 'chair' (IoU=0.97)"
+  },
+  {
+    "image": "img_0146",
+    "type": "class_swap",
+    "score": 0.967,
+    "detail": "Disagreement: detection says 'truck', panoptic says 'car' (IoU=0.97)"
+  },
+  {
+    "image": "img_0169",
+    "type": "class_swap",
+    "score": 0.824,
+    "detail": "Disagreement: detection says 'bus', panoptic says 'truck' (IoU=0.82)"
+  },
+  {
+    "image": "img_0171",
+    "type": "instance_merge",
+    "score": 0.95,
+    "detail": "Panoptic segment 'backpack' merges two distinct detection boxes (det=2 > pan=1)"
+  },
+  {
+    "image": "img_0178",
+    "type": "bbox_drift",
+    "score": 0.613,
+    "detail": "Box for 'car' has center drift 19.0px (IoU=0.61)"
+  },
+  {
+    "image": "img_0188",
+    "type": "class_swap",
+    "score": 0.755,
+    "detail": "Disagreement: detection says 'bowl', panoptic says 'dining table' (IoU=0.76)"
+  },
+  {
+    "image": "img_0226",
+    "type": "class_swap",
+    "score": 0.916,
+    "detail": "Disagreement: detection says 'backpack', panoptic says 'suitcase' (IoU=0.92)"
+  },
+  {
+    "image": "img_0238",
+    "type": "class_swap",
+    "score": 0.972,
+    "detail": "Disagreement: detection says 'bench', panoptic says 'chair' (IoU=0.97)"
+  },
+  {
+    "image": "img_0245",
+    "type": "missing_box",
+    "score": 1.0,
+    "detail": "Panoptic segment 'toilet' (area=30816) missing detection box (max IoU=0.00)"
+  }
+]
