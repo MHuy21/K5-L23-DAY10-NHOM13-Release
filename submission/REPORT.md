@@ -1,13 +1,19 @@
 # Báo cáo nhóm 13
 
 ## 1. Số liệu luyện tập
-- F1 theo seed (rule / cross_check / overall):
-  - Seed clean (seed 5, pool calib): F1 rule = 1.0 (0 lỗi luật được báo, 0 FP), sinh đúng 1 ứng viên đối chiếu tự nhiên.
-  - Seed 11 (r11): F1 rule = 1.0 (bắt trọn 13/13 lỗi luật), sau review mắt đạt F1 cross_check = 1.0, F1 overall = 1.0.
-  - Seed 22 (r22): F1 rule = 1.0 (khớp 100% danh sách lỗi luật ground-truth).
-  - Seed luyện tập 13007 (r13007): F1 rule = 1.0 (bắt đúng 12 lỗi luật), sinh 10 ứng viên đối chiếu (đúng 2 ảnh/người cho 5 thành viên).
-- Số ứng viên trên lô sạch (`--no-faults`): 1 ứng viên; hàng đợi trên seed luyện tập: 10 ảnh (2 ảnh/người).
-- Ngưỡng đã chọn và cách chọn (không dùng `_private`):
+- F1 theo seed, đo bằng `scripts/score_findings.py` chế độ học viên (chỉ in F1 làm tròn 1 chữ số; nhóm không đọc `_private`, không dùng `--truth-dir`):
+
+  | Lô | Lỗi luật validator báo | Ứng viên đối chiếu | F1 rule | F1 cross_check | F1 overall |
+  |---|---:|---:|---:|---:|---:|
+  | r13007 (seed luyện tập, sau review mắt) | 12 | 10 | ≈ 1.0 | ≈ 1.0 | ≈ 1.0 |
+  | r11 (seed phụ) | 13 | 8 | ≈ 1.0 | (không review) | — |
+  | r22 (seed phụ) | 9 | 9 | ≈ 1.0 | (không review) | — |
+  | clean (seed 5, pool calib, `--no-faults`) | 0 | 1 | 1.0 | 1.0 | 1.0 |
+  | r99 (`--opaque`, diễn tập đề ẩn, tên `img_xxxx`) | 11 | 10 | ≈ 1.0 | (không review) | — |
+
+  Seed phụ chỉ dùng để kiểm luật và kiểm công cụ; nhóm chỉ review bằng mắt trên seed luyện tập 13007.
+- Số ứng viên trên lô sạch (`--no-faults`): **1** ứng viên (class_swap, lệch tự nhiên). Hàng đợi trên seed luyện tập: **10 ảnh** (2 ảnh/người cho 5 thành viên); sau khi xem ảnh: 7 `confirmed`, 3 `rejected`.
+- Ngưỡng đã chọn và cách chọn (không dùng `_private`): chỉnh trên **lô sạch** (mọi ứng viên ở đó là lệch tự nhiên của COCO) và bằng cách **mở ảnh** các ứng viên ở seed luyện tập, sao cho hàng đợi đủ nhỏ để 5 người xem hết trong khoảng 20 phút. Không thử–sai theo điểm của `score_findings.py`.
   - `class_swap` / `category_swap`: IoU $\ge 0.70$ giữa box detection và mask segment nhưng nhãn 2 nguồn bất đồng.
   - `instance_merge`: Tận dụng tín hiệu chênh lệch số lượng cá thể giữa 2 nguồn (`det_count > pan_count` cho cùng một lớp) kết hợp điều kiện bbox segment panoptic bao trùm tâm của $\ge 2$ box detection tách biệt (IoU giữa 2 box $< 0.20$).
   - `bbox_drift`: Box detection và segment cùng lớp có độ lệch tâm $\ge 18\%$ kích thước tối thiểu của box và $0.30 \le \text{IoU} \le 0.68$.
@@ -18,7 +24,17 @@
 - Điểm đánh giá là điểm điều hoà $F_1 = \frac{2 \times \text{TP}}{2 \times \text{TP} + \text{FP} + \text{FN}}$, nghĩa là **báo thừa (FP) bị phạt nặng tương đương bỏ sót (FN)**.
 - Nếu tự động báo toàn bộ ứng viên nghi vấn mà không mở ảnh review bằng mắt:
   - Số lượng False Positive (FP) sẽ tăng mạnh do đưa nhầm các ca lệch tự nhiên thành lỗi gán nhãn.
-  - Dẫn đến Precision giảm sâu, kéo $F_1$ tổng tụt từ mức $> 0.9$ (khi có review mắt cẩn thận) xuống chỉ còn $\approx 0.6$. Do đó, việc mở ảnh xem thực tế để xác nhận (`confirmed`) hay bác bỏ (`rejected`) là bước bắt buộc để bảo vệ điểm $F_1$.
+  - Ứng viên còn mang **sai loại**: crosscheck chỉ thấy hai nguồn bất đồng nên ghi `class_swap`, phải mở ảnh mới biết bên nào sai. Báo sai loại bị tính hai lần: một FP (`class_swap`) và một FN (`category_swap`).
+- **Số đo của nhóm** (cùng validator, chỉ khác bước xem ảnh):
+
+  | Lô | Nhận hết ứng viên, không xem ảnh: F1 overall / cross_check | Chỉ nhận dòng `confirmed` sau khi xem ảnh: F1 overall / cross_check |
+  |---|---|---|
+  | r13007 | ≈ 0.9 / ≈ 0.7 | ≈ 1.0 / ≈ 1.0 |
+  | r11 | ≈ 0.8 / ≈ 0.5 | (không review) |
+  | r22 | ≈ 0.7 / ≈ 0.5 | (không review) |
+  | r99 (`--opaque`) | ≈ 0.8 / ≈ 0.6 | (không review) |
+
+  Ở r13007, 3/10 ứng viên là lệch tự nhiên khi mở ảnh: `000000003845` (nĩa nằm chồng lên muỗng, cả hai nguồn đều có fork và spoon), `000000009914` (detection có thêm box hot dog trùng box sandwich), `000000022705` (người che tủ lạnh). Ngoài ra `000000010363` là lỗi của **panoptic** (ảnh là mèo, panoptic ghi dog) nên phải ghi `category_swap`, không phải `class_swap` như crosscheck đề xuất. Nhận hết ứng viên sẽ biến những ca này thành FP/FN, nên F1 cross_check giảm từ ≈ 1.0 xuống ≈ 0.7.
 
 ## 3. Quyết định và lineage
 - **QC v1 = 19/250 = 7,6%** (lô `lab250_a13aacb20205`, seed 13007). Tử số là số **target khác nhau** trong `errors.json`: mỗi ảnh mang nhiều nhất một lỗi, `scene_leak` tính một lần theo cảnh. Gồm 12 lỗi luật (wrong_hash 2, invalid_class 2, duplicate_box 2, bbox_out_of_bounds 1, guideline_mismatch 1, scene_leak 1, invalid_category_id 2, thing_overlap 1) và 7 lỗi gán nhãn đã `confirmed` sau khi xem ảnh (trên 10 ứng viên; 3 ứng viên `rejected` là lệch tự nhiên).
