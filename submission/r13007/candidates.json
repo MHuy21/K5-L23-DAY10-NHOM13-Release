@@ -1,0 +1,62 @@
+[
+  {
+    "image": "000000003845",
+    "type": "class_swap",
+    "score": 0.876,
+    "detail": "Disagreement: detection says 'spoon', panoptic says 'fork' (IoU=0.88)"
+  },
+  {
+    "image": "000000005600",
+    "type": "bbox_drift",
+    "score": 0.568,
+    "detail": "Box for 'bowl' has center drift 50.4px (IoU=0.57)"
+  },
+  {
+    "image": "000000008690",
+    "type": "class_swap",
+    "score": 0.995,
+    "detail": "Disagreement: detection says 'cow', panoptic says 'sheep' (IoU=1.00)"
+  },
+  {
+    "image": "000000009914",
+    "type": "class_swap",
+    "score": 0.815,
+    "detail": "Disagreement: detection says 'hot dog', panoptic says 'sandwich' (IoU=0.81)"
+  },
+  {
+    "image": "000000010363",
+    "type": "class_swap",
+    "score": 0.993,
+    "detail": "Disagreement: detection says 'cat', panoptic says 'dog' (IoU=0.99)"
+  },
+  {
+    "image": "000000013729",
+    "type": "class_swap",
+    "score": 0.994,
+    "detail": "Disagreement: detection says 'cell phone', panoptic says 'remote' (IoU=0.99)"
+  },
+  {
+    "image": "000000014226",
+    "type": "instance_merge",
+    "score": 0.95,
+    "detail": "Panoptic segment 'chair' merges two distinct detection boxes (det=4 > pan=3)"
+  },
+  {
+    "image": "000000015751",
+    "type": "class_swap",
+    "score": 0.984,
+    "detail": "Disagreement: detection says 'orange', panoptic says 'bird' (IoU=0.98)"
+  },
+  {
+    "image": "000000017627",
+    "type": "missing_box",
+    "score": 0.927,
+    "detail": "Panoptic segment 'car' (area=5868) missing detection box (max IoU=0.07)"
+  },
+  {
+    "image": "000000022705",
+    "type": "class_swap",
+    "score": 0.718,
+    "detail": "Disagreement: detection says 'refrigerator', panoptic says 'person' (IoU=0.72)"
+  }
+]

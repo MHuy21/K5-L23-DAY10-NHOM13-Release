@@ -1,0 +1,11 @@
+image,type,verdict,note
+000000003845,class_swap,rejected,"[Huy] nĩa nằm chồng lên muỗng ở cùng một chỗ; cả detection và panoptic đều có đủ 1 fork và 1 spoon, box spoon trùng vùng segment fork chỉ vì hai vật chồng nhau, nhãn hợp lý"
+000000005600,bbox_drift,confirmed,"[Đạt] box bowl của bát thịt phía trên lệch sang phải và xuống dưới, nửa trên bát nằm ngoài box; panoptic viền đúng bát"
+000000008690,class_swap,confirmed,"Trong ảnh là một con cừu trên đồng cỏ, nhãn detection ghi nhầm thành cow (bò), còn mask panoptic ghi đúng là sheep."
+000000009914,class_swap,rejected,"Quân: humberger,  detection ghi hot dog và sandwich; panoptic ghi sandwich"
+000000010363,category_swap,confirmed,"Quân: cat,  detection ghi cat là đúng; panoptic ghi dog là lỗi"
+000000013729,class_swap,confirmed,"[Huy] mở ảnh thấy vật là điều khiển từ xa (remote); detection ghi nhầm thành cell phone, panoptic ghi remote là đúng"
+000000014226,instance_merge,confirmed,[Phúc] mở ảnh thấy rõ 4 ghế riêng biệt; trong panoptic hai ghế đã bị gộp thành một segment chair lớn (area 25463)
+000000015751,class_swap,confirmed,"Trong ảnh là một con chim đậu trên cành cây, nhãn detection ghi nhầm thành orange (quả cam), mask panoptic ghi đúng là bird."
+000000017627,missing_box,confirmed,"[Đạt] taxi trắng chở hành lý trên nóc ở giữa ảnh không có box car nào, panoptic có segment car cho xe này"
+000000022705,class_swap,rejected,"[Phúc] mở ảnh thấy người đứng trước tủ lạnh, cả hai nguồn đều có nhãn người và tủ lạnh; box trùng do người che khuất tủ lạnh, lệch tự nhiên"
