@@ -1,4 +1,4 @@
-# Báo cáo nhóm <<XX>>
+# Báo cáo nhóm 13
 
 ## 1. Số liệu luyện tập
 - F1 theo seed (rule / cross_check / overall):
@@ -21,7 +21,13 @@
   - Dẫn đến Precision giảm sâu, kéo $F_1$ tổng tụt từ mức $> 0.9$ (khi có review mắt cẩn thận) xuống chỉ còn $\approx 0.6$. Do đó, việc mở ảnh xem thực tế để xác nhận (`confirmed`) hay bác bỏ (`rejected`) là bước bắt buộc để bảo vệ điểm $F_1$.
 
 ## 3. Quyết định và lineage
-<<QC v1 a/b, kết luận, vì sao R-021 phải xem lại hoặc train lại.>>
+- **QC v1 = 19/250 = 7,6%** (lô `lab250_a13aacb20205`, seed 13007). Tử số là số **target khác nhau** trong `errors.json`: mỗi ảnh mang nhiều nhất một lỗi, `scene_leak` tính một lần theo cảnh. Gồm 12 lỗi luật (wrong_hash 2, invalid_class 2, duplicate_box 2, bbox_out_of_bounds 1, guideline_mismatch 1, scene_leak 1, invalid_category_id 2, thing_overlap 1) và 7 lỗi gán nhãn đã `confirmed` sau khi xem ảnh (trên 10 ứng viên; 3 ứng viên `rejected` là lệch tự nhiên).
+- **Kết luận v1: HOLD.** 7,6% > ngưỡng 2% của Day 7. Chỉ riêng lỗi luật đã là 12/250 = 4,8% > 2%, nên kết luận không phụ thuộc vào kết quả review. Ngưỡng tính theo **tỉ lệ ảnh lỗi** (không theo số lỗi) để so được giữa các lô khác kích thước và để một ảnh nhiều lỗi không bị đếm nhiều lần.
+- **Lineage** (`runs/lineage.jsonl`, chép sang `submission/lineage.jsonl`): `inject` → `train R-021` trên v1 → `decision HOLD` cho v1. `lineage.py impact --release-id lab250_a13aacb20205` trả về `R-021: affected=True action=review_or_retrain`. Lô v2 sẽ được ghi `release` với `--parent lab250_a13aacb20205` sau khi bàn giao.
+- **Vì sao R-021 phải xem lại hoặc train lại:** R-021 đã học trọng số từ v1, nên sửa dataset (ra v2) **không** tự sửa model đã train.
+  - Model đã học từ nhãn sai: box gán nhầm lớp, box lệch, box lặp, vật thiếu box. Ticket của team AI (bỏ sót `cup` bị che) cũng cho thấy ảnh hưởng của các job theo guideline cũ v1.2.
+  - Lô có cảnh bị rò giữa train và val (`scene_leak`), nên chỉ số validation của R-021 có thể bị **thổi phồng**.
+  - Cần đánh giá lại R-021 trên tập val sạch (không rò cảnh) và train lại trên v2 sau khi các ảnh rework được gán lại.
 
 ## 4. Hash chứng minh gì, không chứng minh gì?
 <<>>
@@ -35,4 +41,8 @@ Ticket nêu lớp `cup` và hai cảnh scene_342, scene_675; changelog cho biế
 - Kết quả seed 13007: tier_a = 3 ảnh, tier_b = 4 ảnh, notify = A04, Q02; `score_findings.py` báo truy vết F1 ≈ 1.0 (tier_a, tier_b, notify).
 
 ## 6. Bug hoặc điểm chưa rõ trong lab (nếu có)
-<<>>
+- **`release_id` của cùng một seed khác nhau giữa các máy.** `release_id` là sha256 của byte trong `manifest.json` + `metadata.json`. Có hai nguồn làm byte khác nhau dù nội dung lô y hệt:
+  - `scripts/pngutil.py` nén mask bằng `zlib`. Python 3.14 trên Windows dùng zlib-ng, nên byte PNG khác bản zlib thường, và `mask_sha256` trong manifest đổi theo.
+  - `Path.write_text` ghi JSON xuống dòng CRLF trên Windows, LF trên macOS/Linux.
+  - Nhóm đã kiểm trên cùng một máy: seed 13007 tạo bằng Python 3.14.10 ra `lab250_a13aacb20205`, bằng Python 3.12.10 ra `lab250_0a6eeec065f8`. Ảnh, nhãn, metadata, jobs, ticket giống hệt; 241 mask khác byte nhưng giống từng pixel.
+  - Hệ quả: người chấm tạo lại lô bằng `export_submission.py --import` trên môi trường khác có thể ra `release_id` khác, làm `check_handover.py` không tìm thấy thư mục `<release_id>_v2` (H4) và lineage không khớp (H12, H14). **Lô chính thức của nhóm được tạo bằng Python 3.14.10 trên Windows 11.** Nhóm không sửa `scripts/`; điểm này cần báo giảng viên để chấm trên cùng môi trường.
