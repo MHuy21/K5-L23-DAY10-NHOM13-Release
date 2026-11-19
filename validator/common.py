@@ -71,23 +71,34 @@ def load(delivery_dir):
     panoptic = read_json("panoptic.json")
     image_by_file = {Path(im["file_name"]).name: im for im in panoptic["images"]}
     ann_by_id = {ann["image_id"]: ann for ann in panoptic["annotations"]}
-    images, annotations, detections = {}, {}, {}
+    images, annotations, detections, warnings = {}, {}, {}, []
     for name, item in manifest.items():
         # Validate all manifest input paths, even when a module does not read them yet.
+        # Path escapes stay fatal: the validator must never read outside delivery.
         for key in ("image", "label", "mask"):
             delivery_path(root, item[key])
-        filename = Path(item["image"]).name
-        if filename not in image_by_file:
-            raise ValueError(f"No panoptic image dimensions for {name}")
-        image = image_by_file[filename]
-        if image["width"] <= 0 or image["height"] <= 0:
-            raise ValueError(f"Invalid image dimensions for {name}")
-        images[name] = image
-        annotations[name] = ann_by_id[image["id"]]
         jobs[meta[name]["job_id"]]  # Fail explicitly on broken metadata references.
-        detections[name] = read_yolo(delivery_path(root, item["label"]),
-                                     image["width"], image["height"])
+        # P1e: one broken image must not stop the whole delivery (hidden test is 40 minutes).
+        # Record a warning, keep empty data for that image, and continue with the others.
+        image = image_by_file.get(Path(item["image"]).name)
+        if image is None or image.get("width", 0) <= 0 or image.get("height", 0) <= 0:
+            warnings.append(f"{name}: no valid panoptic image dimensions; skipped detection/panoptic checks")
+            annotations[name] = {"segments_info": []}
+            detections[name] = []
+            continue
+        images[name] = image
+        if image["id"] in ann_by_id:
+            annotations[name] = ann_by_id[image["id"]]
+        else:
+            warnings.append(f"{name}: no panoptic annotation; panoptic checks see no segments")
+            annotations[name] = {"image_id": image["id"], "segments_info": []}
+        try:
+            detections[name] = read_yolo(delivery_path(root, item["label"]),
+                                         image["width"], image["height"])
+        except (OSError, ValueError) as exc:
+            warnings.append(f"{name}: unreadable label ({exc}); detection checks skipped for this image")
+            detections[name] = []
     return {"root": root, "manifest": manifest, "meta": meta, "jobs": jobs,
             "classes": classes, "panoptic": panoptic, "images": images,
             "annotations": annotations, "categories": {c["id"]: c for c in panoptic["categories"]},
-            "detections": detections}
+            "detections": detections, "warnings": warnings}

@@ -100,9 +100,36 @@ class ValidatorTest(unittest.TestCase):
                     self.assertEqual(errors[0]["type"], "duplicate_box")
 
     def test_bad_labels_fail_explicitly(self):
+        # read_yolo vẫn báo lỗi rõ ràng cho từng file nhãn hỏng...
         for line in ("0 nan 0.5 0.2 0.2", "0 0.5 0.5"):
             with self.subTest(line=line), self.assertRaises(ValueError):
-                self.boxes(line)
+                path = self.delivery / "labels/img_0001.txt"
+                path.write_text(line, encoding="utf-8")
+                common.read_yolo(path, 640, 480)
+
+    def test_bad_label_does_not_stop_whole_delivery(self):
+        # ...nhưng load() không dừng cả lô: ghi cảnh báo, bỏ qua nhãn ảnh đó, các ảnh khác vẫn được kiểm.
+        ctx = self.boxes("0 0.5 0.5\n")
+        self.assertEqual(ctx["detections"]["img_0001"], [])
+        self.assertTrue(any("img_0001" in w for w in ctx["warnings"]))
+        self.assertEqual(len(ctx["detections"]["sample-B"]), 1)
+
+    def test_missing_annotation_does_not_stop_whole_delivery(self):
+        doc = json.loads((self.delivery / "panoptic.json").read_text(encoding="utf-8"))
+        doc["annotations"] = [a for a in doc["annotations"] if a["image_id"] != 10]
+        (self.delivery / "panoptic.json").write_text(json.dumps(doc), encoding="utf-8")
+        ctx = common.load(self.delivery)
+        self.assertEqual(ctx["annotations"]["img_0001"]["segments_info"], [])
+        self.assertTrue(any("img_0001" in w for w in ctx["warnings"]))
+
+    def test_cli_still_writes_output_with_bad_label(self):
+        (self.delivery / "labels/img_0001.txt").write_text("0 0.5 0.5\n", encoding="utf-8")
+        out = self.base / "output/rules.json"
+        result = subprocess.run([sys.executable, str(ROOT / "validator/validate.py"), str(self.delivery),
+                                 "--out", str(out)], capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue(out.is_file())
+        self.assertIn("img_0001", result.stderr)
 
     def test_path_escape_rejected(self):
         with self.assertRaises(ValueError):
@@ -116,7 +143,8 @@ class ValidatorTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(json.loads(out.read_text()), {"errors": []})
         self.assertEqual(json.loads(candidates.read_text()), [])
-        self.assertIn("stub", result.stderr)
+        # P1d/P2a đã triển khai rules_panoptic và crosscheck: không còn cảnh báo stub.
+        self.assertNotIn("stub", result.stderr)
         self.assertEqual(before, {p.relative_to(self.delivery): p.read_bytes() for p in self.delivery.rglob("*") if p.is_file()})
         self.assertEqual(validate.main([str(self.delivery), "--out", str(self.delivery / "rules.json")]), 2)
 

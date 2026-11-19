@@ -17,9 +17,12 @@ Chỉ đọc thư mục delivery được truyền vào; chỉ thư viện chu�
 - `common.yolo_to_pixel(x, y, w, h, width, height)` trả `(left, top, right, bottom)` theo pixel, không clip cạnh.
 - Mỗi module luật cung cấp `check(ctx) -> list[dict]`. Ưu tiên lỗi ảnh: file → metadata → detection → panoptic. `scene_leak` là lỗi cảnh, được giữ riêng.
 - `crosscheck.candidates(ctx, skip_images)` chỉ bỏ qua tên ảnh có lỗi luật, không bỏ cả cảnh rò split.
-- `rules_panoptic.py` và `crosscheck.py` hiện là **stub**. Núi thay phần hàm và đổi `IMPLEMENTED = True` khi đã triển khai. CLI in cảnh báo cho đến lúc đó.
+- `rules_panoptic.py` (P1d) và `crosscheck.py` (P2a) đã được Núi triển khai, `IMPLEMENTED = True`; CLI không còn cảnh báo stub.
 - Dung sai cạnh box: 0.01 chuẩn hóa. Box lặp: cùng lớp, chênh kích thước ≤ 0.01 pixel và chênh tâm mỗi trục ≤ 2.01 pixel; cần kiểm chứng tiếp trên lô sạch/seed phụ ở P1e.
-- Lỗi cấu trúc dữ liệu không thuộc 7 loại trên (YOLO không đủ cột, số không hữu hạn, thiếu tham chiếu) làm CLI trả mã 2 kèm thông báo; không im lặng bỏ qua.
+- Lỗi cấu trúc dữ liệu không thuộc các loại trên:
+  - **Của một ảnh** (YOLO không đủ cột, số không hữu hạn, thiếu annotation hoặc kích thước panoptic): CLI in `WARNING: <ảnh>: ...` ra stderr, bỏ qua phần kiểm tương ứng của ảnh đó và **vẫn chạy tiếp, vẫn ghi output** (P1e: đề ẩn 40 phút, không để một file hỏng làm mất cả lô). Không im lặng bỏ qua.
+  - **Của cả lô** (thiếu `manifest.json`/`metadata.json`/`jobs.csv`, đường dẫn trỏ ra ngoài delivery, job không tồn tại): CLI trả mã 2 kèm thông báo.
+- Dung sai `duplicate_box` giữ nguyên (tâm ≤ 2.01 px, kích thước ≤ 0.01 px) vì DELIVERY định nghĩa box lặp là lệch 1–2 pixel cùng kích thước; diễn tập trên lô `--opaque` seed 99 vẫn cho lỗi luật F1 ≈ 1.0, lô sạch 0 báo thừa.
 - Không ghi output vào delivery. Không dùng Pillow, mạng, dữ liệu gốc hoặc `_private/`.
 
 Chạy seed nhóm:

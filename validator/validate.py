@@ -54,6 +54,8 @@ def main(argv=None):
         if out == candidates_out:
             raise ValueError("--out and --candidates must be different files")
         ctx = common.load(root)
+        for warning in ctx.get("warnings", []):
+            print(f"WARNING: {warning}", file=sys.stderr)
         errors, skip_images = collect_errors(ctx)
         candidates = crosscheck.candidates(ctx, skip_images) if candidates_out else None
         write_json(out, {"errors": errors})
